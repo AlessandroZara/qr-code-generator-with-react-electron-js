@@ -27,6 +27,9 @@
       "category": "your.app.category.type"
     }
   },
+  "win": {
+    "icon": "build/favicon.ico"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
