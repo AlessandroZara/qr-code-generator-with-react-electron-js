@@ -45,14 +45,20 @@ function Qrcode() {
     setQr("");
     setUrl("https://");
   };
-  
+
   useEffect(() => {
-    window.addEventListener('keydown', e => {
-     if(e.key === 'Enter'){
-      GenerateQRCode();
-     }
-    })
-   })
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        GenerateQRCode();
+        console.log("Generating QR Code");
+      } else if (e.key === "Delete") {
+        if (url) {
+          ResetQRCode();
+          console.log("Delete");
+        }
+      }
+    });
+  });
 
   useEffect(() => {
     if (error) {
@@ -74,7 +80,7 @@ function Qrcode() {
       <Button variant="contained" onClick={GenerateQRCode}>
         Generate
       </Button>
-    
+
       {qr && (
         <>
           <Button
