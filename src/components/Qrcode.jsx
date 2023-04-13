@@ -19,7 +19,7 @@ function Qrcode() {
       setQr("");
       setUrl("https://");
     } else if (check === false) {
-      setError("Inserisci un indirizzo url valido perfavore");
+      setError("Inserisci un URL valido perfavore");
       setQr("");
       setUrl("https://");
     } else {
