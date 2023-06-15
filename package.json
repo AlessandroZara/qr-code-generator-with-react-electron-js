@@ -2,9 +2,9 @@
   "name": "qrcode-apps",
   "version": "0.1.0",
   "author": "Alessandro Zara",
-  "description": "Applicazione per generare qr code",
+  "description": "Qr Code Generator",
   "main": "public/electron.js",
-  "productName": "Applicazione per generare qr code",
+  "productName": "Qr Code Generator",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -23,12 +23,21 @@
   },
   "build": {
     "appId": "my_app_qr_code.id",
-    "mac": {
-      "category": "your.app.category.type"
+    "directories": {
+      "buildResources": "build"
+    },
+    "files": [
+      "build/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "deleteAppDataOnUninstall": true
     }
-  },
-  "win": {
-    "icon": "build/favicon.ico"
   },
   "scripts": {
     "start": "react-scripts start",

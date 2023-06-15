@@ -23,10 +23,14 @@ img {
 }
 
 h1 {
-	font-size: 2rem;
+	font-size: 3rem;
 	margin-bottom: 1rem;
 }
-
+h3{
+	color:aqua;
+	margin-bottom: 1rem;
+	
+}
 input {
 	appearance: none;
 	outline: none;
