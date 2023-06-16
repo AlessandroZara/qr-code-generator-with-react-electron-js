@@ -29,6 +29,11 @@ function Qrcode() {
       setQr("");
       setUrl("https://");
       setWidth("")
+    } else if(width < 50 || width > 1000 ){
+      setError("Inserisci un numero compreso tra 50 e 1000 nel campo grandezza");
+      setQr("");
+      setUrl("https://");
+      setWidth("")
     } else {
       QRCode.toDataURL(
         url,
@@ -74,7 +79,7 @@ function Qrcode() {
     if (error) {
       setTimeout(function () {
         setError("");
-      }, 2000);
+      }, 3000);
     }
   });
 
