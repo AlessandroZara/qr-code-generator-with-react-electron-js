@@ -8,6 +8,8 @@ function Qrcode() {
   const [qr, setQr] = useState("");
   const [error, setError] = useState("");
   const [width, setWidth] = useState("");
+  const [colorLight, setColorLight] = useState("");
+  const [colorDark, setColorDark] = useState("");
   const pattern = new RegExp(
     "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
   );
@@ -34,7 +36,20 @@ function Qrcode() {
       setQr("");
       setUrl("https://");
       setWidth("")
-    } else {
+    } else if(width < 50 || width > 1000 ){
+      setError("Inserisci un numero compreso tra 50 e 1000 nel campo grandezza");
+      setQr("");
+      setUrl("https://");
+      setWidth("")
+      
+    }
+    else if(colorLight && colorDark ==="" ){
+      setError("Inserisci i colori per lo sfondo e per la grafica del qr code");
+      setQr("");
+      setUrl("https://");
+      setWidth("")
+    }
+      else {
       QRCode.toDataURL(
         url,
         {
@@ -42,9 +57,9 @@ function Qrcode() {
           height: parseInt(width),
           margin: 2,
           color: {
-            // black: '#335383FF',
-            // blue: '#EEEEEEFF'
-          },
+            light:colorLight,
+            dark:colorDark,
+          }
         },
         (err, url) => {
           if (err) return console.error(err);
@@ -58,7 +73,9 @@ function Qrcode() {
   const ResetQRCode = () => {
     setQr("");
     setUrl("https://");
-    setWidth("")
+    setWidth("");
+    setColorDark("");
+    setColorLight("");
   };
 
   useEffect(() => {
@@ -101,6 +118,15 @@ function Qrcode() {
       <div className="dimesion-qrcode-width">
       <h3 className="link">Inserisci la grandezza del qr code (basta il numero)</h3>
       <input type="text" placeholder="Grandezza qrcode in pixel" value={width} onChange={(e)=>setWidth(e.target.value)}/>
+      </div>
+      <br />
+      <br />
+      <div className="qrcode-color">
+      <h3 className="link">Inserisci il colore del qr code in formato EsaDecimale(Hex)</h3>
+      <input type="text" placeholder="Colore Sfondo Qr code" value={colorLight} onChange={(e)=>setColorLight(e.target.value)}/>
+      <br/>
+      <br/>
+      <input type="text" placeholder="Colore del qr code" value={colorDark} onChange={(e)=>setColorDark(e.target.value)}/>
       </div>
       <Button style={{marginTop:"20px"}}variant="contained" onClick={GenerateQRCode}>
         Generate
