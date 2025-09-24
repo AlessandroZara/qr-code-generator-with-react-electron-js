@@ -46,7 +46,7 @@
     "eject": "react-scripts eject",
     "electron": "react-scripts build && electron .",
     "start-electron": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "package": "electron-builder build --win -c.extraMetadata.main=build/electron.js --publish never",
+    "package": "react-scripts build && electron-builder build --win -c.extraMetadata.main=build/electron.js --publish never",
     "publish": "electron-builder build --mac --win --publish always"
   },
   "eslintConfig": {
