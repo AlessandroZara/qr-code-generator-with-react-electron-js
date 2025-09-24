@@ -33,12 +33,12 @@ h3{
 }
 input {
 	appearance: none;
-	outline: none;
-	border: none;
-	background: #EEE;
-	width: 100%;
-	max-width: 320px;
-	padding: 0.5rem 1rem;
-	border-radius: 0.5rem;
-	margin-right: 1rem;
+    outline: none;
+    border: none;
+    background: #EEE;
+    width: 100%;
+    max-width: 720px; /* <--- Questa riga è il problema */
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
 }
