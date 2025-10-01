@@ -6,7 +6,7 @@ import { TextField, MenuItem, Grid, Select, FormControl, InputLabel } from "@mui
  */
 function ContentInputs({ state, setters }) {
     const { contentType, textValue, wifiDetails, vCardDetails } = state;
-    const { setContentType, setTextValue, setWifiDetails, setVCardDetails } = setters;
+    const { setContentType, setUrl, setTextValue, setWifiDetails, setVCardDetails } = setters;
 
     // Gestione generica del cambiamento per i dettagli (vcard/wifi)
     const handleDetailChange = (type, key, value) => {
@@ -46,8 +46,15 @@ function ContentInputs({ state, setters }) {
                         fullWidth
                         label="Inserisci l'URL"
                         value={state.url}
-                        onChange={(e) => setters.setUrl(e.target.value)}
+                        onChange={(e) => setUrl(e.target.value)}
                         placeholder="e.g. https://google.com"
+                        sx={{
+                            '& .MuiInputBase-input': {
+                                overflow: 'visible',
+                                textOverflow: 'clip',
+                                padding: '12px 14px',
+                            },
+                        }}
                     />
                 </Grid>
             )}
@@ -103,35 +110,74 @@ function ContentInputs({ state, setters }) {
                 </>
             )}
 
-            {/* vCard Input */}
+            {/* vCard Input (AGGIORNATO) */}
             {contentType === 'vcard' && (
-                <>
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            fullWidth
-                            label="Nome Completo"
-                            value={vCardDetails.name}
-                            onChange={(e) => handleDetailChange('vcard', 'name', e.target.value)}
-                        />
+                <Grid item xs={12}>
+                    <Grid container spacing={2}>
+                        {/* Riga 1: Nome, Cognome, Email */}
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Nome"
+                                value={vCardDetails.firstName}
+                                onChange={(e) => handleDetailChange('vcard', 'firstName', e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Cognome"
+                                value={vCardDetails.lastName}
+                                onChange={(e) => handleDetailChange('vcard', 'lastName', e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Email"
+                                type="email"
+                                value={vCardDetails.email}
+                                onChange={(e) => handleDetailChange('vcard', 'email', e.target.value)}
+                            />
+                        </Grid>
+
+                        {/* Riga 2: Cellulare, Ufficio */}
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Telefono Cellulare"
+                                value={vCardDetails.mobile}
+                                onChange={(e) => handleDetailChange('vcard', 'mobile', e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Telefono Ufficio"
+                                value={vCardDetails.office}
+                                onChange={(e) => handleDetailChange('vcard', 'office', e.target.value)}
+                            />
+                        </Grid>
+                        
+                        {/* Riga 3: Posizione, Azienda */}
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Posizione Lavorativa"
+                                value={vCardDetails.position}
+                                onChange={(e) => handleDetailChange('vcard', 'position', e.target.value)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Azienda"
+                                value={vCardDetails.company}
+                                onChange={(e) => handleDetailChange('vcard', 'company', e.target.value)}
+                            />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            fullWidth
-                            label="Telefono"
-                            value={vCardDetails.phone}
-                            onChange={(e) => handleDetailChange('vcard', 'phone', e.target.value)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <TextField
-                            fullWidth
-                            label="Email"
-                            type="email"
-                            value={vCardDetails.email}
-                            onChange={(e) => handleDetailChange('vcard', 'email', e.target.value)}
-                        />
-                    </Grid>
-                </>
+                </Grid>
             )}
         </Grid>
     );

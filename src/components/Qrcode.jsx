@@ -10,16 +10,28 @@ import {
   Snackbar,
 } from "@mui/material";
 
+// Importa i componenti e la logica dai file esterni
 import SettingsForm from './SettingsForm';
 import { generateQrcodeData, addLogoToQr, makeBackgroundTransparent } from './QrGeneratorLogic';
 import { buildQrContent } from './qrContentBuilder'; 
 
-// Costanti definite fuori dal componente per useCallback
+// --- Costanti ---
 const URL_PATTERN = new RegExp(
   "(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})[/\\w .-]*/?"
 );
-const PLACEHOLDER_COLOR = '#FFFFFF'; // Colore valido per la libreria quando vogliamo trasparenza
-const TRANSPARENT_KEY = 'transparent-key'; // Chiave per distinguere la trasparenza
+const PLACEHOLDER_COLOR = '#FFFFFF';
+const TRANSPARENT_KEY = 'transparent-key';
+
+// --- STATO INIZIALE VCARD ---
+const initialVCardDetails = { 
+  firstName: "", 
+  lastName: "", 
+  mobile: "", 
+  office: "", 
+  email: "",
+  position: "",
+  company: ""
+};
 
 function Qrcode() {
   // --- STATO DELL'APPLICAZIONE ---
@@ -31,11 +43,11 @@ function Qrcode() {
   const [error, setError] = useState("");
   const [logoFile, setLogoFile] = useState(null);
   
-  // STATI PER NUOVE FUNZIONALITÀ
+  // STATI PER NUOVE FUNZIONALITÀ (Ripristinati)
   const [contentType, setContentType] = useState("url"); 
   const [textValue, setTextValue] = useState(""); 
   const [wifiDetails, setWifiDetails] = useState({ ssid: "", password: "", encryption: "WPA" }); 
-  const [vCardDetails, setVCardDetails] = useState({ name: "", phone: "", email: "" }); 
+  const [vCardDetails, setVCardDetails] = useState(initialVCardDetails); // Aggiornato
   const [isTransparent, setIsTransparent] = useState(false); 
 
 
@@ -48,9 +60,18 @@ function Qrcode() {
     const details = { url, textValue, wifiDetails, vCardDetails };
     const content = buildQrContent(contentType, details);
 
-    if (!content || content === 'https://') {
-      setError("Per favore, inserisci un contenuto valido.");
-      return;
+    // Gestione dei casi in cui non ci sono contenuti validi
+    if (contentType !== 'vcard' && (!content || content === 'https://')) {
+        setError("Per favore, inserisci un contenuto valido.");
+        return;
+    }
+    // Per vCard, controlliamo se almeno un campo è compilato
+    if (contentType === 'vcard') {
+        const isAnyVCardFieldFilled = Object.values(vCardDetails).some(val => val.trim() !== '');
+        if (!isAnyVCardFieldFilled) {
+             setError("Per favore, compila almeno un campo della vCard.");
+             return;
+        }
     }
 
     if (contentType === 'url' && url.length > 0 && url !== 'https://' && !URL_PATTERN.test(url)) {
@@ -69,8 +90,7 @@ function Qrcode() {
       return;
     }
 
-    // 2. IMPOSTAZIONE DEL COLORE DI SFONDO
-    // Se isTransparent è true, passiamo il PLACEHOLDER alla libreria, altrimenti usiamo il colore scelto.
+    // 2. IMPOSTAZIONE DEL COLORE DI SFONDO (Gestione Trasparenza)
     const qrCodeLightColor = isTransparent ? PLACEHOLDER_COLOR : colorLight;
 
     try {
@@ -81,13 +101,11 @@ function Qrcode() {
 
       // 4. AGGIUNTA DEL LOGO E DELL'AREA SILENZIOSA
       if (logoFile) {
-        // Se isTransparent è true, passiamo la KEY per la logica di addLogoToQr
         const logoLightColor = isTransparent ? TRANSPARENT_KEY : colorLight; 
         finalQr = await addLogoToQr(qrUrl, logoFile, parsedWidth, logoLightColor);
       }
       
       // 5. RENDI LO SFONDO TRASPARENTE (Solo se NON è stato applicato il logo)
-      // Se c'è il logo, la trasparenza è stata gestita nel canvas di addLogoToQr.
       if (isTransparent && !logoFile) {
           finalQr = await makeBackgroundTransparent(qrUrl, parsedWidth);
       }
@@ -114,7 +132,7 @@ function Qrcode() {
     setContentType("url");
     setTextValue("");
     setWifiDetails({ ssid: "", password: "", encryption: "WPA" });
-    setVCardDetails({ name: "", phone: "", email: "" });
+    setVCardDetails(initialVCardDetails); // Reset VCARD
     setIsTransparent(false);
   }, []);
 
@@ -127,7 +145,6 @@ function Qrcode() {
     document.body.removeChild(link);
   };
 
-  // Oggetti per passare gli stati e le funzioni ai componenti figli
   const state = { url, width, colorLight, colorDark, contentType, textValue, wifiDetails, vCardDetails, isTransparent };
   const setters = { setUrl, setWidth, setColorLight, setColorDark, setLogoFile, setContentType, setTextValue, setWifiDetails, setVCardDetails, setIsTransparent };
   const handlers = { handleGenerateQRCode, handleReset };
@@ -144,14 +161,12 @@ function Qrcode() {
           Crea i tuoi QR Code personalizzati in modo rapido e semplice!
         </Typography>
 
-        {/* Delega il rendering del form al componente SettingsForm */}
         <SettingsForm 
           state={state} 
           setters={setters} 
           handlers={handlers}
         />
 
-        {/* Display del QR Code */}
         {qr && (
           <Box
             sx={{
@@ -159,12 +174,12 @@ function Qrcode() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              // CORREZIONE: Stili a scacchiera sul contenitore per mostrare la trasparenza
+              // Stili a scacchiera sul contenitore per mostrare la trasparenza
               padding: isTransparent ? '20px' : '0', 
               backgroundImage: isTransparent ? 'repeating-linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc), repeating-linear-gradient(45deg, #ccc 25%, #fff 25%, #fff 75%, #ccc 75%, #ccc)' : 'none',
               backgroundSize: isTransparent ? '20px 20px' : 'none',
               backgroundPosition: isTransparent ? '0 0, 10px 10px' : 'none',
-              border: '1px solid #ccc'
+              border: isTransparent ? '1px solid #ccc' : 'none'
             }}
           >
             <Typography variant="h6" gutterBottom>
@@ -189,7 +204,6 @@ function Qrcode() {
           </Box>
         )}
 
-        {/* Snackbar per gli errori */}
         <Snackbar
           open={!!error}
           autoHideDuration={6000}
