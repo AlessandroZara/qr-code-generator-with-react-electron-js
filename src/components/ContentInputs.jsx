@@ -11,7 +11,9 @@ function ContentInputs({ state, setters }) {
     // Gestione generica del cambiamento per i dettagli (vcard/wifi)
     const handleDetailChange = (type, key, value) => {
         if (type === 'wifi') {
-            setWifiDetails(prev => ({ ...prev, [key]: value }));
+            setWifiDetails(prev => ({ ...prev, [key]: value })); //Questa parte utilizza l'operatore "spread" (...) di JavaScript per creare una copia superficiale di tutte le proprietà e i valori dell'oggetto prev.
+            //Fondamentale: In React, non si deve mai modificare lo stato direttamente. Devi sempre creare un nuovo oggetto. 
+            // Lo spread operator garantisce che si stia creando un nuovo oggetto che contiene tutte le vecchie proprietà.
         } else if (type === 'vcard') {
             setVCardDetails(prev => ({ ...prev, [key]: value }));
         }
